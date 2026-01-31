@@ -1,0 +1,23 @@
+# Build results
+result
+result-*
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.old
+
+# Don't ignore these important files
+!.envrc
+!.gitignore
