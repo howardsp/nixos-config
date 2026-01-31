@@ -8,6 +8,12 @@
     # Unstable for latest packages when needed
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     
+    # CashyOS - Performance optimized packages and kernel
+    cashyos = {
+      url = "github:CashyOS/nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
     # Home Manager for user-level configuration
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
@@ -24,7 +30,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nixos-hardware, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nixos-hardware, cashyos, ... }@inputs:
     let
       # System architecture
       system = "x86_64-linux";
@@ -38,6 +44,11 @@
             inherit inputs system hostname;
             # Expose unstable packages
             pkgs-unstable = import nixpkgs-unstable {
+              inherit system;
+              config.allowUnfree = true;
+            };
+            # Expose CashyOS packages
+            pkgs-cashyos = import cashyos {
               inherit system;
               config.allowUnfree = true;
             };
@@ -59,6 +70,10 @@
                 extraSpecialArgs = {
                   inherit inputs hostname;
                   pkgs-unstable = import nixpkgs-unstable {
+                    inherit system;
+                    config.allowUnfree = true;
+                  };
+                  pkgs-cashyos = import cashyos {
                     inherit system;
                     config.allowUnfree = true;
                   };

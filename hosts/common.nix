@@ -1,10 +1,19 @@
-{ config, lib, pkgs, hostname, ... }:
+{ config, lib, pkgs, hostname, pkgs-cashyos, ... }:
 
 {
   # Boot configuration
   boot = {
-    # Use latest kernel by default
-    kernelPackages = pkgs.linuxPackages_latest;
+    # Use CashyOS optimized kernel for better performance
+    kernelPackages = pkgs-cashyos.linuxPackages_cachyos;
+    
+    # Kernel parameters for performance
+    kernelParams = [
+      # CPU scheduler optimizations
+      "sched_bore=1"
+      
+      # Performance governor by default
+      "cpufreq.default_governor=performance"
+    ];
     
     # Bootloader configuration
     loader = {
@@ -53,11 +62,13 @@
       substituters = [
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
+        "https://cachyos.org/lix"
       ];
       
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "cachyos.org:PY1r/W3XPaNG0f3G8t8s3ubgVs0sZzGrfFLTePtl76c="
       ];
     };
     

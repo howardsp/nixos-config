@@ -23,7 +23,8 @@
       eamodio.gitlens
       mhutchie.git-graph
       
-      # Productivity
+      # AI & Productivity
+      anthropic.claude-vsx  # Claude AI Assistant
       streetsidesoftware.code-spell-checker
       yzhang.markdown-all-in-one
       
@@ -105,6 +106,9 @@
       # Python
       "python.analysis.typeCheckingMode" = "basic";
       "python.linting.enabled" = true;
+      
+      # Claude AI Settings
+      "claude.uriScheme" = "vscode";
       
       # Telemetry
       "telemetry.telemetryLevel" = "off";
