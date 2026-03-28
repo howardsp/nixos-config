@@ -1,157 +1,122 @@
-# Modern NixOS Configuration
+# Howard's Nix Configuration
 
-A clean, modular NixOS configuration supporting multiple machines with home-manager integration.
+Cross-platform Nix setup for NixOS (Linux) and macOS (nix-darwin) with Home Manager,
+flakes, and performance-first defaults.
 
-## 🎯 Design Philosophy
-
-- **Single-user desktop focus**: Optimized for personal workstation use
-- **Modular architecture**: Easy to enable/disable features per machine
-- **Declarative everything**: All system state in version control
-- **Modern defaults**: Current best practices and tooling
-
-## 📁 Structure
-
-```
-.
-├── flake.nix              # Main entry point
-├── hosts/                 # Per-machine configurations
-│   ├── desktop/          
-│   ├── laptop/           
-│   └── common.nix         # Shared host settings
-├── modules/               # System-level modules
-│   ├── desktop/           # Desktop environment configs
-│   ├── hardware/          # Hardware-specific settings
-│   └── services/          # System services
-├── home/                  # Home-manager configurations
-│   ├── programs/          # Application configs
-│   ├── desktop/           # Desktop environment user settings
-│   └── default.nix        # Base user configuration
-└── overlays/              # Package overlays and modifications
-```
-
-## 🚀 Quick Start
-
-### Initial Installation
-
-1. **Clone this repository:**
-   ```bash
-   git clone <your-repo-url> ~/.config/nixos
-   cd ~/.config/nixos
-   ```
-
-2. **Generate hardware configuration:**
-   ```bash
-   nixos-generate-config --show-hardware-config > hosts/<hostname>/hardware.nix
-   ```
-
-3. **Create host configuration:**
-   ```bash
-   cp hosts/desktop/default.nix hosts/<hostname>/default.nix
-   # Edit hosts/<hostname>/default.nix to customize
-   ```
-
-4. **Build and switch:**
-   ```bash
-   sudo nixos-rebuild switch --flake .#<hostname>
-   ```
-
-### Daily Usage
+## Quick Start
 
 ```bash
+# Linux — rebuild current host
+sudo nixos-rebuild switch --flake .#$(hostname)
+
+# macOS — rebuild current host
+nix run nix-darwin -- switch --flake .#nixbookair
+
 # Update all inputs
 nix flake update
 
-# Rebuild current host
-sudo nixos-rebuild switch --flake .
+# Clean old generations (30+ days)
+sudo nix-collect-garbage --delete-older-than 30d
 
-# Test changes without switching
-sudo nixos-rebuild test --flake .
-
-# Build specific host
-sudo nixos-rebuild switch --flake .#<hostname>
+# Diff last two generations
+nixdiff
 ```
 
-### Cleaning Up
+## Directory Structure
 
-```bash
-# Remove old generations older than 7 days
-sudo nix-collect-garbage --delete-older-than 7d
-
-# Optimize nix store
-nix-store --optimize
+```
+.
+├── flake.nix                  # Entry point — defines all hosts
+├── lib/
+│   └── default.nix            # mkLinuxHost / mkDarwinHost builders
+│
+├── hosts/                     # Per-machine config (kernel, boot, toggles)
+│   ├── igloo/
+│   │   ├── default.nix        # Host config + feature toggles
+│   │   └── hardware.nix       # nixos-generate-config output
+│   ├── avalanche/
+│   ├── virtualnix/
+│   └── nixbookair/
+│
+├── modules/                   # System-level configuration
+│   ├── common/                # ← Shared across Linux + macOS
+│   │   ├── packages.nix       # ★ ADD CROSS-PLATFORM PACKAGES HERE
+│   │   ├── fonts.nix
+│   │   ├── nix-settings.nix
+│   │   └── shell-scripts.nix
+│   ├── linux/                 # ← NixOS only
+│   │   ├── packages.nix       # ★ ADD LINUX-ONLY PACKAGES HERE
+│   │   ├── gnome.nix
+│   │   ├── performance.nix    # Kernel tuning, zram, earlyoom, sysctl
+│   │   ├── security.nix
+│   │   ├── sound.nix
+│   │   ├── printing.nix
+│   │   ├── networking.nix
+│   │   ├── virtualisation.nix
+│   │   ├── steam.nix
+│   │   └── containers.nix
+│   └── darwin/                # ← macOS only
+│       ├── packages.nix       # ★ ADD macOS NIX PACKAGES HERE
+│       └── homebrew.nix       # ★ ADD HOMEBREW CASKS/BREWS HERE
+│
+└── home/                      # User-level (Home Manager)
+    ├── common/                # ← Shared across Linux + macOS
+    │   ├── shell/             # bash, zsh, p10k, fzf, bat, direnv
+    │   ├── editors/           # neovim
+    │   └── git.nix
+    ├── linux/                 # emacs, vscode, gnome-settings, rofi
+    └── darwin/                # (macOS-specific HM overrides)
 ```
 
-## 🖥️ Supported Configurations
+## Adding Packages
 
-### Desktop Environments
+| What you want                    | Where to add it                      |
+|----------------------------------|--------------------------------------|
+| CLI tool for both platforms      | `modules/common/packages.nix`        |
+| Linux GUI app                    | `modules/linux/packages.nix`         |
+| macOS app via Nix                | `modules/darwin/packages.nix`        |
+| macOS app via Homebrew Cask      | `modules/darwin/homebrew.nix`        |
+| Mac App Store app                | `modules/darwin/homebrew.nix`        |
+| GNOME extension                  | `modules/linux/gnome.nix`            |
+| Font                             | `modules/common/fonts.nix`           |
+| VS Code extension                | `home/linux/vscode.nix`              |
 
-- **GNOME**: Full-featured, batteries-included (default)
-- **KDE Plasma**: Highly customizable Qt-based environment
-- **Hyprland**: Modern Wayland compositor (experimental)
+## Adding a New Host
 
-### Common Features
+### Linux
+1. Create `hosts/<name>/default.nix` with boot/kernel config
+2. Run `nixos-generate-config` and save as `hosts/<name>/hardware.nix`
+3. Add to `flake.nix`: `<name> = lib.mkLinuxHost { host = "<name>"; };`
 
-- ✅ Zsh with starship prompt
-- ✅ Modern CLI tools (ripgrep, fd, bat, eza)
-- ✅ VS Code with essential extensions
-- ✅ Firefox with privacy hardening
-- ✅ Automatic system updates (optional)
-- ✅ Tailscale VPN integration
-- ✅ Docker and podman support
-- ✅ Development environments (Nix, Python, Node.js, Rust)
+### macOS
+1. Create `hosts/<name>/default.nix` (can be empty for defaults)
+2. Add to `flake.nix`: `<name> = lib.mkDarwinHost { host = "<name>"; };`
 
-## 🔧 Customization
+## Feature Toggles
 
-### Adding a New Machine
-
-1. Create directory: `mkdir -p hosts/<hostname>`
-2. Copy template: `cp hosts/desktop/default.nix hosts/<hostname>/default.nix`
-3. Generate hardware config: `nixos-generate-config --show-hardware-config > hosts/<hostname>/hardware.nix`
-4. Customize settings in `hosts/<hostname>/default.nix`
-5. Add to `flake.nix`:
-   ```nix
-   nixosConfigurations.<hostname> = nixpkgs.lib.nixosSystem {
-     # ...
-   };
-   ```
-
-### Enabling/Disabling Features
-
-Edit your host configuration (`hosts/<hostname>/default.nix`):
+Per-host feature flags in `hosts/<name>/default.nix`:
 
 ```nix
-{
-  # Desktop environment
-  modules.desktop.gnome.enable = true;
-  
-  # Development tools
-  modules.development = {
-    enable = true;
-    languages = [ "python" "rust" "nodejs" ];
-  };
-  
-  # Gaming
-  modules.gaming.steam.enable = true;
-  
-  # Virtualization
-  modules.virtualization = {
-    docker.enable = true;
-    libvirt.enable = true;
-  };
-}
+features.qemu.enable = true;            # QEMU/KVM virtualisation
+features.steam.enable = false;           # Steam gaming
+features.synergy-server.enable = true;   # Synergy KVM server
+features.homeassistant.enable = true;    # Home Assistant container
+features.webcam.enable = false;          # Webcam + Zoom/Webex
+features.citrix.enable = false;          # Citrix Workspace
+features.office.enable = true;           # LibreOffice + OnlyOffice
+features.browsers.enable = true;         # Brave, Firefox, Chrome, Edge
+features.photo.enable = true;            # VLC, GIMP, Krita, etc.
 ```
 
-## 📚 Documentation
+## Performance Optimizations
 
-- [Module Options](./docs/modules.md) - All available module options
-- [Home Manager](./docs/home-manager.md) - User-level configuration
-- [Troubleshooting](./docs/troubleshooting.md) - Common issues and solutions
-- [Migration Guide](./docs/migration.md) - Migrating from old configurations
+The `modules/linux/performance.nix` module applies these automatically:
 
-## 🤝 Contributing
-
-This is a personal configuration, but suggestions and improvements are welcome!
-
-## 📝 License
-
-MIT License - Feel free to use as a template for your own configurations.
+- **CPU**: `performance` governor, AMD P-State active mode
+- **Memory**: swappiness=10, zram compressed swap (zstd, 50% RAM)
+- **I/O**: mq-deadline scheduler, tmpfs on /tmp (50% RAM)
+- **Network**: TCP Fast Open, enlarged buffers, MTU probing
+- **OOM Protection**: earlyoom kills at 5% free RAM
+- **Filesystem**: 1M inotify watches, 2M max file descriptors
+- **Kernel**: Per-host `mitigations=off` for max throughput
+- **Journal**: Capped at 500MB, 1 month retention

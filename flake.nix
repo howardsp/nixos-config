@@ -1,117 +1,54 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  Howard's Nix Configuration — Linux & macOS                ║
+# ║                                                            ║
+# ║  USAGE:                                                    ║
+# ║    Linux:  sudo nixos-rebuild switch --flake .#<host>      ║
+# ║    macOS:  nix run nix-darwin -- switch --flake .#<host>   ║
+# ║    Update: nix flake update                                ║
+# ║    Clean:  sudo nix-collect-garbage -d                     ║
+# ║    Diff:   nvd diff /nix/var/nix/profiles/system-*-link   ║
+# ╚══════════════════════════════════════════════════════════════╝
 {
-  description = "Modern NixOS configuration with home-manager";
+  description = "Howard's cross-platform Nix configuration";
 
   inputs = {
-    # Use stable channel by default
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
-    
-    # Unstable for latest packages when needed
+    # ── Core ──────────────────────────────────────────────
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    
-    # CashyOS - Performance optimized packages and kernel
-    cashyos = {
-      url = "github:CashyOS/nixpkgs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    
-    # Home Manager for user-level configuration
+
+    # ── Home Manager ──────────────────────────────────────
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
-    # Hardware-specific configurations
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    
-    # Hyprland for modern Wayland compositor (optional)
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
+
+    # ── macOS ─────────────────────────────────────────────
+    darwin = {
+      url = "github:LnL7/nix-darwin/nix-darwin-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+    homebrew-bundle = { url = "github:homebrew/homebrew-bundle"; flake = false; };
+    homebrew-core   = { url = "github:homebrew/homebrew-core";   flake = false; };
+    homebrew-cask   = { url = "github:homebrew/homebrew-cask";   flake = false; };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nixos-hardware, cashyos, ... }@inputs:
-    let
-      # System architecture
-      system = "x86_64-linux";
-      
-      # Helper to create system configurations
-      mkSystem = hostname: extraModules:
-        nixpkgs.lib.nixosSystem {
-          inherit system;
-          
-          specialArgs = {
-            inherit inputs system hostname;
-            # Expose unstable packages
-            pkgs-unstable = import nixpkgs-unstable {
-              inherit system;
-              config.allowUnfree = true;
-            };
-            # Expose CashyOS packages
-            pkgs-cashyos = import cashyos {
-              inherit system;
-              config.allowUnfree = true;
-            };
-          };
-          
-          modules = [
-            # Host-specific configuration
-            ./hosts/${hostname}
-            
-            # Common configuration
-            ./hosts/common.nix
-            
-            # Home Manager integration
-            home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                extraSpecialArgs = {
-                  inherit inputs hostname;
-                  pkgs-unstable = import nixpkgs-unstable {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                  pkgs-cashyos = import cashyos {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                };
-                users.howardsp = import ./home;
-              };
-            }
-          ] ++ extraModules;
-        };
-    in
-    {
-      # NixOS configurations
-      nixosConfigurations = {
-        # Desktop workstation
-        desktop = mkSystem "desktop" [ ];
-        
-        # Laptop
-        laptop = mkSystem "laptop" [
-          nixos-hardware.nixosModules.common-pc-laptop
-          nixos-hardware.nixosModules.common-pc-laptop-ssd
-        ];
-        
-        # Virtual machine
-        vm = mkSystem "vm" [
-          nixos-hardware.nixosModules.common-pc
-        ];
-      };
-
-      # Development shell for working on this configuration
-      devShells.${system}.default = nixpkgs.legacyPackages.${system}.mkShell {
-        name = "nixos-config";
-        packages = with nixpkgs.legacyPackages.${system}; [
-          git
-          nixfmt-rfc-style
-          nil # Nix language server
-          nix-tree
-          nvd # Nix version diff
-        ];
-      };
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, darwin,
+              nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, ... }@inputs:
+  let
+    lib = import ./lib { inherit inputs nixpkgs nixpkgs-unstable home-manager darwin
+                                nix-homebrew homebrew-bundle homebrew-core homebrew-cask; };
+  in {
+    # ── NixOS Hosts ───────────────────────────────────────
+    nixosConfigurations = {
+      igloo       = lib.mkLinuxHost { host = "igloo"; };
+      avalanche   = lib.mkLinuxHost { host = "avalanche"; };
+      virtualnix  = lib.mkLinuxHost { host = "virtualnix"; };
     };
+
+    # ── macOS Hosts ───────────────────────────────────────
+    darwinConfigurations = {
+      nixbookair = lib.mkDarwinHost { host = "nixbookair"; };
+    };
+  };
 }
