@@ -37,7 +37,7 @@ in {
     modules = [
       # Allow unfree
       { nixpkgs.config.allowUnfree = true; }
-      { nixpkgs-unstable.config.allowUnfree = true; }
+      
 
       # Host-specific config (imports hardware + toggles)
       ../hosts/${host}

@@ -16,6 +16,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     claude-desktop.url = "github:aaddrick/claude-desktop-debian";
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
     # ── Home Manager ──────────────────────────────────────
     home-manager = {

@@ -22,9 +22,6 @@
 
 config.environment.systemPackages = with pkgs;
     [
-    
-      claude-code      
-
       
       # ── System Utilities ──────────────────────────────
       stacer                # system optimizer GUI
