@@ -36,10 +36,10 @@
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, darwin,
-              nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, claude-desktop, ... }@inputs:
+              nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, claude-desktop, llm-agents, ... }@inputs:
   let
     lib = import ./lib { inherit inputs nixpkgs nixpkgs-unstable home-manager darwin
-                                nix-homebrew homebrew-bundle homebrew-core homebrew-cask claude-desktop; };
+                                nix-homebrew homebrew-bundle homebrew-core homebrew-cask claude-desktop llm-agents; };
   in {
     # ── NixOS Hosts ───────────────────────────────────────
     nixosConfigurations = {
