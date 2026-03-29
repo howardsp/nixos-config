@@ -7,10 +7,7 @@
       # Use all available cores for building
       max-jobs = "auto";
       cores = 0;    # 0 = use all available cores per build job
-
-      # ── Store Optimization ──────────────────────────────
-      auto-optimise-store = true;
-
+      sandbox = true;  # Isolate builds for reproducibility and security    
       # ── Caching ─────────────────────────────────────────
       substituters = [
         "https://cache.nixos.org"
