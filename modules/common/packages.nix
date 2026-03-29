@@ -59,9 +59,11 @@
     entr                # run commands on file changes
 
     # ── AI & Productivity ───────────────────────────────
-    mods                # command line AI
-    
-    #pkgs-unstable.claude-code  # Anthropic CLI
+    mods                            # command line AI
+    pkgs-unstable.claude-code       # Anthropic CLI
+    pkgs-unstable.opencode          # open-source coding agent
+    pkgs-unstable.gemini-cli        # Google Gemini CLI
+    pkgs-unstable.llm-agents.qwen-code  # Qwen coding agent
 
     # ── OCR & Image Processing ──────────────────────────
     tesseract           # OCR engine
