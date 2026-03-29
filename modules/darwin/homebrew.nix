@@ -51,8 +51,7 @@
       "monitorcontrol"             # External display brightness
     ];
 
-    masApps = {
-      "newsify"     = 510153374;
+    masApps = {      
       "amphetamine" = 937984704;
     };
   };
