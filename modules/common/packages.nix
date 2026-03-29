@@ -60,6 +60,7 @@
 
     # ── AI & Productivity ───────────────────────────────
     mods                # command line AI
+    pkgs-unstable.claude-code  # Anthropic CLI
 
     # ── OCR & Image Processing ──────────────────────────
     tesseract           # OCR engine
