@@ -45,6 +45,7 @@
     cmake
     perl
     direnv
+    jdk25_headless
 
     # ── Networking & HTTP ───────────────────────────────
     httpie              # friendly HTTP client
@@ -60,7 +61,7 @@
 
     # ── AI & Productivity ───────────────────────────────
     mods                            # command line AI
-    pkgs-llm-agents.claude-code     # Anthropic CLI
+    pkgs-llm-agents.claude-code     # Anthropic CLI   (from https://github.com/numtide/llm-agents.nix)
     pkgs-llm-agents.opencode        # open-source coding agent
     pkgs-llm-agents.gemini-cli      # Google Gemini CLI
     pkgs-llm-agents.qwen-code       # Qwen coding agent

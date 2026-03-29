@@ -10,6 +10,14 @@
 
   # ── Flakes & Nix CLI ─────────────────────────────────────
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.auto-optimise-store = true;
+  nix.settings.warn-dirty = false;
+
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
 
   # ── ZSH as default shell ─────────────────────────────────
   programs.zsh.enable = true;

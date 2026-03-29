@@ -1,12 +1,12 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Howard's Nix Configuration — Linux & macOS                ║
-# ║                                                            ║
-# ║  USAGE:                                                    ║
-# ║    Linux:  sudo nixos-rebuild switch --flake .#<host>      ║
-# ║    macOS:  nix run nix-darwin -- switch --flake .#<host>   ║
-# ║    Update: nix flake update                                ║
-# ║    Clean:  sudo nix-collect-garbage -d                     ║
-# ║    Diff:   nvd diff /nix/var/nix/profiles/system-*-link   ║
+# ║  Howard's Nix Configuration — Linux & macOS                  ║
+# ║                                                              ║
+# ║  USAGE:                                                      ║
+# ║    Linux:  sudo nixos-rebuild switch --flake .#<host>        ║
+# ║    macOS:  nix run nix-darwin -- switch --flake .#<host>     ║
+# ║    Update: nix flake update                                  ║
+# ║    Clean:  sudo nix-collect-garbage -d                       ║
+# ║    Diff:   nvd diff /nix/var/nix/profiles/system-*-link      ║
 # ╚══════════════════════════════════════════════════════════════╝
 {
   description = "Howard's cross-platform Nix configuration";
