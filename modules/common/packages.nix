@@ -6,7 +6,7 @@
 # │  For Linux-only → modules/linux/packages.nix            │
 # │  For macOS-only → modules/darwin/packages.nix           │
 # └─────────────────────────────────────────────────────────┘
-{ pkgs, pkgs-unstable, ... }:
+{ pkgs, pkgs-unstable, pkgs-llm-agents, ... }:
 {
   environment.systemPackages = with pkgs; [
     # ── Shells & Prompts ────────────────────────────────
@@ -60,10 +60,10 @@
 
     # ── AI & Productivity ───────────────────────────────
     mods                            # command line AI
-    pkgs-unstable.claude-code       # Anthropic CLI
-    pkgs-unstable.opencode          # open-source coding agent
-    pkgs-unstable.gemini-cli        # Google Gemini CLI
-    pkgs-unstable.qwen-code             # Qwen coding agent
+    pkgs-llm-agents.claude-code     # Anthropic CLI
+    pkgs-llm-agents.opencode        # open-source coding agent
+    pkgs-llm-agents.gemini-cli      # Google Gemini CLI
+    pkgs-llm-agents.qwen-code       # Qwen coding agent
 
     # ── OCR & Image Processing ──────────────────────────
     tesseract           # OCR engine
