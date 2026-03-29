@@ -15,7 +15,7 @@
 
   nix.gc = {
     automatic = true;
-    interval = "weekly";
+    #interval = "weekly";
     options = "--delete-older-than 30d";
   };
 
