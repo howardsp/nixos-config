@@ -45,7 +45,7 @@
     cmake
     perl
     direnv
-    jdk25_headless
+    jdk
 
     # ── Networking & HTTP ───────────────────────────────
     httpie              # friendly HTTP client

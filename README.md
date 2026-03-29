@@ -38,6 +38,8 @@ nixdiff
 │   ├── virtualnix/
 │   └── nixbookair/
 │
+├── overlays/                   # Overlays 
+│
 ├── modules/                   # System-level configuration
 │   ├── common/                # ← Shared across Linux + macOS
 │   │   ├── packages.nix       # ★ ADD CROSS-PLATFORM PACKAGES HERE
@@ -91,6 +93,13 @@ nixdiff
 ### macOS
 1. Create `hosts/<name>/default.nix` (can be empty for defaults)
 2. Add to `flake.nix`: `<name> = lib.mkDarwinHost { host = "<name>"; };`
+
+## Adding Overlays
+                  
+default.nix ← imports all overlays, takes flake inputs
+claude-desktop.nix   ← NixOS module for claude-desktop overlay
+   
+To add a future overlay, just create overlays/my-overlay.nix and add it to the list in overlays/default.nix. 
 
 ## Feature Toggles
 

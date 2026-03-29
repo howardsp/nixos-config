@@ -1,55 +1,54 @@
-(require 'package)
+;;; init.el — Emacs configuration (packages managed by Nix, not package.el)
+
+;; ── Package system ────────────────────────────────────────────────────────
+;; Nix populates the load-path via extraPackages; package.el is not needed.
 (setq package-enable-at-startup nil)
-(setq package-check-signature nil)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 
-;; boostrap 'use-package'
-;;(unless (package-installed-p 'use-package)
-(package-initialize)
-(package-refresh-contents)
-(package-install 'use-package)
+;; ── Custom file ───────────────────────────────────────────────────────────
+;; Redirect Emacs-written customizations to a mutable file so that
+;; init.el (a read-only Nix store symlink) is never written to.
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
-(setq package-selected-packages
-  '(use-package
-    nix-mode))
+;; ── use-package ───────────────────────────────────────────────────────────
+;; use-package is provided by Nix; :ensure is not needed — never use it.
+(eval-when-compile
+  (require 'use-package))
+(setq use-package-always-ensure nil)   ; packages come from Nix, not ELPA
 
-(use-package nix-mode :mode "\\.nix\\'")
+;; ── Languages ─────────────────────────────────────────────────────────────
+(use-package nix-mode
+  :mode "\\.nix\\'")
+
 (use-package cmake-mode)
-(use-package all-the-icons :if (display-graphic-p))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(cua-mode t nil (cua-base))
- '(custom-enabled-themes '(wombat))
- '(ispell-dictionary nil)
- '(package-selected-packages '(use-package ## nix-mode cmake-mode))
- '(show-paren-mode t))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; ── UI ────────────────────────────────────────────────────────────────────
+(use-package all-the-icons
+  :if (display-graphic-p))
 
+;; Load wombat theme (built-in)
+(load-theme 'wombat t)
 
-;; Put backup files neatly away
-(let ((backup-dir "~/.dotfiles/emacs-tmp/emacs/backups")
-      (auto-saves-dir "~/.dotfiles/emacs-tmp/emacs/auto-saves/"))
-  (dolist (dir (list backup-dir auto-saves-dir))
-    (when (not (file-directory-p dir))
+;; ── Built-in settings ─────────────────────────────────────────────────────
+(cua-mode t)             ; familiar cut/copy/paste keys
+(show-paren-mode t)      ; highlight matching parentheses
+
+;; ── Backups & auto-save ───────────────────────────────────────────────────
+;; Keep backups out of working directories, inside ~/.cache/emacs/
+(let ((backup-dir   (expand-file-name "backups"   "~/.cache/emacs"))
+      (auto-save-dir (expand-file-name "auto-saves" "~/.cache/emacs")))
+  (dolist (dir (list backup-dir auto-save-dir))
+    (unless (file-directory-p dir)
       (make-directory dir t)))
-  (setq backup-directory-alist `(("." . ,backup-dir))
-        auto-save-file-name-transforms `((".*" ,auto-saves-dir t))
-        auto-save-list-file-prefix (concat auto-saves-dir ".saves-")
-        tramp-backup-directory-alist `((".*" . ,backup-dir))
-        tramp-auto-save-directory auto-saves-dir))
+  (setq backup-directory-alist         `(("." . ,backup-dir))
+        auto-save-file-name-transforms `((".*" ,auto-save-dir t))
+        auto-save-list-file-prefix     (concat auto-save-dir "/.saves-")
+        tramp-backup-directory-alist   `((".*" . ,backup-dir))
+        tramp-auto-save-directory      auto-save-dir))
 
-(setq backup-by-copying t    ; Don't delink hardlinks
-      delete-old-versions t  ; Clean up the backups
-      version-control t      ; Use version numbers on backups,
-      kept-new-versions 5    ; keep some new versions
-      kept-old-versions 2)   ; and some old ones, too
+(setq backup-by-copying t   ; don't delink hardlinks
+      delete-old-versions t ; clean up old backups
+      version-control t     ; use version numbers on backups
+      kept-new-versions 5
+      kept-old-versions 2)
