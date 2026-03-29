@@ -3,7 +3,7 @@
 # These two functions (mkLinuxHost and mkDarwinHost) are the only
 # abstraction layer. Everything else is plain modules.
 { inputs, nixpkgs, nixpkgs-unstable, home-manager, darwin,
-  nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask }:
+  nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, claude-desktop, ... }:
 let
   # Build an unstable overlay so modules can use pkgs-unstable
   mkUnstable = system: import nixpkgs-unstable {
@@ -37,6 +37,7 @@ in {
     modules = [
       # Allow unfree
       { nixpkgs.config.allowUnfree = true; }
+      
 
       # Host-specific config (imports hardware + toggles)
       ../hosts/${host}
@@ -44,6 +45,11 @@ in {
       # Shared system modules
       ../modules/common
       ../modules/linux
+
+      ({ pkgs, ... }: {
+                nixpkgs.overlays = [ claude-desktop.overlays.default ];
+                environment.systemPackages = [ pkgs.claude-desktop ];
+        })
 
       # Home Manager as NixOS module
       home-manager.nixosModules.home-manager
