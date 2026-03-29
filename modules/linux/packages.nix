@@ -5,7 +5,7 @@
 # │  For cross-platform → modules/common/packages.nix      │
 # │  For macOS-only     → modules/darwin/packages.nix       │
 # └─────────────────────────────────────────────────────────┘
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, nixpkgs-unstable, ... }:
 {
   # ── Feature Toggles ──────────────────────────────────────
   # Override these per-host: e.g. `features.office.enable = false;`
@@ -19,8 +19,13 @@
     "synergy-server".enable = lib.mkEnableOption "Synergy server"   // { default = false; };
   };
 
-  config.environment.systemPackages = with pkgs;
+
+config.environment.systemPackages = with pkgs;
     [
+    
+      claude-code      
+
+      
       # ── System Utilities ──────────────────────────────
       stacer                # system optimizer GUI
       xfce.thunar           # lightweight file manager

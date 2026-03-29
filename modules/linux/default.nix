@@ -1,5 +1,5 @@
 # modules/linux/default.nix — NixOS-specific system configuration
-{ config, lib, pkgs, host, username, fullname, ... }:
+{ config, lib, pkgs, nixpkgs-unstable, host, username, fullname, ... }:
 {
   imports = [
     ./packages.nix

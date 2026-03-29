@@ -15,6 +15,7 @@
     # ── Core ──────────────────────────────────────────────
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    claude-desktop.url = "github:aaddrick/claude-desktop-debian";
 
     # ── Home Manager ──────────────────────────────────────
     home-manager = {
@@ -34,10 +35,10 @@
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, darwin,
-              nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, ... }@inputs:
+              nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, claude-desktop, ... }@inputs:
   let
     lib = import ./lib { inherit inputs nixpkgs nixpkgs-unstable home-manager darwin
-                                nix-homebrew homebrew-bundle homebrew-core homebrew-cask; };
+                                nix-homebrew homebrew-bundle homebrew-core homebrew-cask claude-desktop; };
   in {
     # ── NixOS Hosts ───────────────────────────────────────
     nixosConfigurations = {
