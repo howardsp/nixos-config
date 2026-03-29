@@ -47,10 +47,8 @@ in {
       ../modules/common
       ../modules/linux
 
-      ({ pkgs, ... }: {
-                nixpkgs.overlays = [ claude-desktop.overlays.default ];
-                environment.systemPackages = [ pkgs.claude-desktop ];
-        })
+      # Overlays (see ../overlays/)
+      ] ++ (import ../overlays { inherit claude-desktop; }) ++ [
 
       # Home Manager as NixOS module
       home-manager.nixosModules.home-manager
