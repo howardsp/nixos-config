@@ -33,7 +33,11 @@ config.environment.systemPackages = with pkgs;
       insync                # Google Drive client
       android-tools         # adb, fastboot
       gitkraken             # Git GUI
-      jdk                   # Java
+
+      # ── Dev Tools ───────────────────────────────────────
+      gcc
+      cmake
+      jdk
 
       # ── X11 Utilities ────────────────────────────────
       xorg.xrandr

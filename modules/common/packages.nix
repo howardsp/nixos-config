@@ -41,11 +41,9 @@
 
     # ── Dev Tools ───────────────────────────────────────
     python3
-    gcc
-    cmake
     perl
     direnv
-    jdk
+
 
     # ── Networking & HTTP ───────────────────────────────
     httpie              # friendly HTTP client
