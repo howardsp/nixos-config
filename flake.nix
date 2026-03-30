@@ -14,6 +14,7 @@
   inputs = {
     # ── Core ──────────────────────────────────────────────
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs2505.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     claude-desktop.url = "github:aaddrick/claude-desktop-debian";
     llm-agents.url = "github:numtide/llm-agents.nix";
@@ -35,10 +36,10 @@
     homebrew-cask   = { url = "github:homebrew/homebrew-cask";   flake = false; };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, darwin,
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs2505, home-manager, darwin,
               nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, claude-desktop, llm-agents, ... }@inputs:
   let
-    lib = import ./lib { inherit inputs nixpkgs nixpkgs-unstable home-manager darwin
+    lib = import ./lib { inherit inputs nixpkgs nixpkgs-unstable nixpkgs2505 home-manager darwin
                                 nix-homebrew homebrew-bundle homebrew-core homebrew-cask claude-desktop llm-agents; };
   in {
     # ── NixOS Hosts ───────────────────────────────────────

@@ -5,7 +5,7 @@
 # │  For cross-platform → modules/common/packages.nix      │
 # │  For macOS-only     → modules/darwin/packages.nix       │
 # └─────────────────────────────────────────────────────────┘
-{ config, lib, pkgs, nixpkgs-unstable, ... }:
+{ config, lib, pkgs, nixpkgs-unstable, pkgs-2505,... }:
 {
   # ── Feature Toggles ──────────────────────────────────────
   # Override these per-host: e.g. `features.office.enable = false;`
@@ -64,7 +64,7 @@ config.environment.systemPackages = with pkgs;
       linuxPackages.v4l2loopback v4l-utils
     ]
     ++ lib.optionals config.features.citrix.enable [
-      citrix_workspace
+      pkgs-2505.citrix_workspace
     ]
     ++ lib.optionals config.features.qemu.enable [
       virt-viewer virtio-win virt-top virt-manager

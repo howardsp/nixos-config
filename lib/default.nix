@@ -2,11 +2,16 @@
 #
 # These two functions (mkLinuxHost and mkDarwinHost) are the only
 # abstraction layer. Everything else is plain modules.
-{ inputs, nixpkgs, nixpkgs-unstable, home-manager, darwin,
+{ inputs, nixpkgs, nixpkgs2505, nixpkgs-unstable, home-manager, darwin,
   nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, claude-desktop, llm-agents, ... }:
 let
   # Build an unstable overlay so modules can use pkgs-unstable
   mkUnstable = system: import nixpkgs-unstable {
+    inherit system;
+    config.allowUnfree = true;
+  };
+
+  mk2505 = system: import nixpkgs2505 {
     inherit system;
     config.allowUnfree = true;
   };
@@ -16,6 +21,7 @@ let
     inherit host username fullname;
     pkgs-unstable = mkUnstable system;
     pkgs-llm-agents = llm-agents.packages.${system};
+    pkgs-2505 = mk2505 system;
   };
 
   # Shared Home Manager settings
