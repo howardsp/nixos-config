@@ -56,7 +56,8 @@
       bat       = "bat --color=always";
       ll        = "ls -lptr --color";
       ls        = "ls --color";
-      nixdarwin = "nix run nix-darwin -- switch --flake .#${host}";
+      nixdarwin = "nix run nix-darwin -- build --flake .#${host}";
+      nixdarwin-activate = "sudo darwin-rebuild activate";
       nixlinux  = "sudo nixos-rebuild switch --flake .#$(uname -n)";
       nixclean  = "nix-collect-garbage --delete-older-than 30d --max-jobs auto";
       # Git shortcuts
