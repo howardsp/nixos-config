@@ -7,7 +7,7 @@
       # Use all available cores for building
       max-jobs = "auto";
       cores = 0;    # 0 = use all available cores per build job
-      sandbox = true;  # Isolate builds for reproducibility and security    
+      #sandbox = true;  # Isolate builds for reproducibility and security    -- Darwin doesn't like this
       # ── Caching ─────────────────────────────────────────
       substituters = [
         "https://cache.nixos.org"
