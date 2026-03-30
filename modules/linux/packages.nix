@@ -24,7 +24,7 @@ config.environment.systemPackages = with pkgs;
     [
       
       # ── System Utilities ──────────────────────────────
-      stacer                # system optimizer GUI
+      
       xfce.thunar           # lightweight file manager
       rofi                  # application launcher
       gnome-multi-writer    # USB writer
@@ -50,7 +50,7 @@ config.environment.systemPackages = with pkgs;
       brave firefox google-chrome microsoft-edge
     ]
     ++ lib.optionals config.features.office.enable [
-      flameshot libreoffice-fresh onlyoffice-bin inkscape
+      flameshot libreoffice-fresh onlyoffice-desktopeditors inkscape
     ]
     ++ lib.optionals config.features.photo.enable [
       vlc gimp pinta krita glib photocollage mpv

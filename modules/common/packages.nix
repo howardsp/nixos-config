@@ -30,7 +30,7 @@
     # ── Modern CLI Replacements ─────────────────────────
     bat                 # better cat
     duf                 # better df
-    du-dust             # better du
+    dust             # better du
     fd                  # better find
     ripgrep             # better grep (rga searches all file types)
     choose              # better cut/awk basics

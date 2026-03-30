@@ -37,7 +37,12 @@ in {
     specialArgs = mkSpecialArgs { inherit host username fullname system; };
     modules = [
       # Allow unfree
-      { nixpkgs.config.allowUnfree = true; }
+      {nixpkgs.config.allowUnfree = true; }
+      {nixpkgs.config.allowBroken = true;}
+      {nixpkgs.config.permittedInsecurePackages = [
+                "libsoup-2.74.3"
+              ];
+      }
       
 
       # Host-specific config (imports hardware + toggles)

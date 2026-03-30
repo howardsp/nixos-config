@@ -77,14 +77,13 @@
     carlito                     # Microsoft Calibri equivalent
     noto-fonts
     noto-fonts-cjk-sans         # Chinese, Japanese, Korean
-    noto-fonts-emoji
-    noto-fonts-extra
+    noto-fonts-color-emoji    
     fira-code
     fira-code-symbols
     fira-mono
     hack-font
     corefonts                   # Microsoft free fonts
-    ubuntu_font_family
+    ubuntu-classic
     roboto
     cascadia-code
     mplus-outline-fonts.githubRelease
