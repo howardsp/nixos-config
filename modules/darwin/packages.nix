@@ -11,6 +11,7 @@
   environment.systemPackages = with pkgs; [
     mas           # Mac App Store CLI
     qemu_full     # Virtualisation
+    ruby_4_0
 
   ];
 }
