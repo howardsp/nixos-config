@@ -6,12 +6,11 @@
 # │  For Linux-only     → modules/linux/packages.nix       │
 # │  For Homebrew casks → modules/darwin/homebrew.nix      │
 # └─────────────────────────────────────────────────────────┘
-{ pkgs, ... }:
+{ pkgs, pkgs-unstable, ... }:
 {
   environment.systemPackages = with pkgs; [
     mas           # Mac App Store CLI
     qemu_full     # Virtualisation
-    ruby_4_0
-
+    pkgs-unstable.ruby_4_0
   ];
 }
