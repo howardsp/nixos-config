@@ -40,6 +40,7 @@
       "insync"
       "dropbox"
       "iterm2"
+      "bitwarden"
 
       # System Utilities
       "unnaturalscrollwheels"
