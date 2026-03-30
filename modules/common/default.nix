@@ -10,7 +10,7 @@
 
   # ── Flakes & Nix CLI ─────────────────────────────────────
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.settings.optimise.automatic = true;
+  #nix.settings.optimise.automatic = true;  # mac doesn't like this
   nix.settings.warn-dirty = false;
 
   nix.gc = {
