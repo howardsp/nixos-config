@@ -39,6 +39,10 @@ config.environment.systemPackages = with pkgs;
       cmake
       jdk
 
+     # ── Synergy (KVM) ───────────────────────────────────
+     synergy
+
+
       # ── X11 Utilities ────────────────────────────────
       xorg.xrandr
       xorg.xkill

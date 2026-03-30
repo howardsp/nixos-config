@@ -74,7 +74,5 @@
     nh                  # nix helper
     nix-output-monitor  # pretty build output
 
-    # ── Synergy (KVM) ───────────────────────────────────
-    synergy
   ];
 }
