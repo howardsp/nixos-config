@@ -10,7 +10,7 @@ flakes, and performance-first defaults.
 sudo nixos-rebuild switch --flake .#$(hostname)
 
 # macOS — rebuild current host
-nix run nix-darwin -- switch --flake .#nixbookair
+sudo darwin-rebuild switch --flake .#$(hostname)
 
 # Update all inputs
 nix flake update
