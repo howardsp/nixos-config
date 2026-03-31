@@ -19,6 +19,7 @@
 
     brews = [
       "openjdk"
+      "synergy-core"
     ];
 
     casks = [
