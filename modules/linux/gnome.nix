@@ -15,6 +15,8 @@
   services.dbus.packages = [ pkgs.gnome2.GConf ];
   programs.dconf.enable = true;
 
+  services.gnome.gnome-keyring.enable = true;
+
   # ── Remove bloat from default GNOME install ──────────────
   environment.gnome.excludePackages = with pkgs; [
     gnome-remote-desktop
