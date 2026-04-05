@@ -10,44 +10,63 @@
 {
   environment.systemPackages = with pkgs; [
     # ── Shells & Prompts ────────────────────────────────
-    bash
-    zsh
-    zsh-powerlevel10k
+    bash                # bash shell
+    zsh                 # Z shell
+    zsh-powerlevel10k   # zsh theme with git/status prompt
 
     # ── Core CLI Tools ──────────────────────────────────
-    vim
-    neovim
-    wget
-    curl
-    zip
-    unzip
-    htop
-    coreutils-full
-    fastfetch
-    git
-    tldr
+    vim                 # terminal text editor
+    # neovim — installed via programs.neovim in home/common/editors/default.nix
+    wget                # file downloader
+    curl                # URL data transfer
+    zip                 # zip compression
+    unzip               # zip extraction
+    htop                # interactive process viewer
+    coreutils-full      # GNU core utilities (cp, mv, ls…)
+    fastfetch           # system info display
+    git                 # version control
+    tldr                # simplified man pages
 
     # ── Modern CLI Replacements ─────────────────────────
     bat                 # better cat
     duf                 # better df
     dust                # better du
     fd                  # better find
-    ripgrep             # better grep (rga searches all file types)
-    choose              # better cut/awk basics
+    ripgrep             # better grep (searches all file types)
+    choose              # better cut/awk for field selection
     sd                  # better sed
-    difftastic          # diff that understands code
+    difftastic          # diff that understands code syntax
     fzf                 # fuzzy finder
     gtop                # visual system monitor
+    eza                 # better ls (colours, icons, git status)
+    procs               # better ps (colour, tree view)
+    zoxide              # smarter cd (learns frequent dirs)
 
     # ── Dev Tools ───────────────────────────────────────
-    python3
-    perl
-    direnv
-
+    python3             # Python 3 runtime
+    perl                # Perl runtime
+    direnv              # per-directory environment variables
+    nodejs              # JavaScript / TypeScript runtime
+    go                  # Go toolchain
+    shellcheck          # shell script linter
+    shfmt               # shell script formatter
 
     # ── Networking & HTTP ───────────────────────────────
     httpie              # friendly HTTP client
     curlie              # curl with httpie UX
+    dig                 # DNS lookup
+    nmap                # network scanner
+    wirelesstools       # wireless network utilities
+    tcpdump             # packet capture
+    tshark              # CLI Wireshark packet analyser
+    iproute2            # network config (ip command)
+    netcat-gnu          # read/write TCP/UDP connections
+    mtr                 # combined ping + traceroute
+    iperf3              # network bandwidth tester
+    dnsutils            # DNS utilities (nslookup, etc.)
+    iputils             # ping and other IP utilities
+    iptables            # Linux firewall rules
+    traceroute          # trace network path to host
 
     # ── Data Processing ─────────────────────────────────
     miller              # sed/awk/cut for CSV/JSON/etc
@@ -56,6 +75,21 @@
 
     # ── File Watchers & Automation ──────────────────────
     entr                # run commands on file changes
+
+    # ── Media Processing ────────────────────────────────
+    ffmpeg              # video/audio encoding and processing
+    yt-dlp              # video downloader (YouTube and more)
+
+    # ── Terminal Multiplexer ─────────────────────────────
+    tmux                # terminal session/pane multiplexer
+
+    # ── Git Extras ──────────────────────────────────────
+    gh                  # GitHub CLI
+    lazygit             # TUI git client
+
+    # ── Security & Secrets ──────────────────────────────
+    age                 # modern file encryption
+    sops                # secrets management (pairs with age/gpg)
 
     # ── AI & Productivity ───────────────────────────────
     mods                            # command line AI
@@ -66,13 +100,17 @@
 
     # ── OCR & Image Processing ──────────────────────────
     tesseract           # OCR engine
-    conjure             # image transformation
+    conjure             # image transformation (ImageMagick CLI)
 
     # ── Nix-Specific Tools ──────────────────────────────
-    home-manager
-    nvd                 # nix version diff
-    nh                  # nix helper
+    home-manager        # user environment manager
+    nvd                 # nix version diff (compare generations)
+    nh                  # nix helper (rebuild, clean, etc.)
     nix-output-monitor  # pretty build output
+    nix-tree            # interactive nix closure explorer
+    alejandra           # opinionated Nix code formatter
+    deadnix             # find unused nix expressions
+    statix              # Nix linter and suggestions
 
   ];
 }

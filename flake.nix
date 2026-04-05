@@ -44,7 +44,7 @@
   in {
     # ── NixOS Hosts ───────────────────────────────────────
     nixosConfigurations = {
-      igloo       = lib.mkLinuxHost { host = "igloo"; };
+      ruger       = lib.mkLinuxHost { host = "ruger"; };
       avalanche   = lib.mkLinuxHost { host = "avalanche"; };
       virtualnix  = lib.mkLinuxHost { host = "virtualnix"; };
     };

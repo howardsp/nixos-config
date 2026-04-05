@@ -2,8 +2,7 @@
 { config, lib, pkgs, ... }:
 {
   # ── Rofi Config ──────────────────────────────────────────
-  home.packages = [ pkgs.rofi ];
-
+  # rofi package is declared in modules/linux/packages.nix
   home.file.".config/rofi/config.rasi".text = ''
     configuration {
       modes: [ combi ];

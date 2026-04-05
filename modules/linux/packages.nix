@@ -22,51 +22,72 @@
 
 config.environment.systemPackages = with pkgs;
     [
-      
       # ── System Utilities ──────────────────────────────
-      
       xfce.thunar           # lightweight file manager
-      rofi                  # application launcher
-      gnome-multi-writer    # USB writer
-      mediawriter           # Fedora media writer
-      syncthing             # file sync
-      insync                # Google Drive client
-      android-tools         # adb, fastboot
+      rofi                  # application launcher (dmenu replacement)
+      gnome-multi-writer    # write ISO to multiple USB drives at once
+      mediawriter           # bootable USB creator (Fedora media writer)
+      syncthing             # peer-to-peer file sync
+      insync                # Google Drive / OneDrive client
+      android-tools         # adb, fastboot for Android device management
       gitkraken             # Git GUI
 
       # ── Dev Tools ───────────────────────────────────────
-      gcc
-      cmake
-      jdk
+      gcc                   # C/C++ compiler
+      cmake                 # build system generator
+      jdk                   # Java Development Kit
 
-     # ── Synergy (KVM) ───────────────────────────────────
-     synergy
+      # ── Containers ──────────────────────────────────────
+      docker-compose        # multi-container Docker orchestration
+      dive                  # explore Docker image layers
 
+      # ── Synergy (KVM) ───────────────────────────────────
+      synergy               # software KVM switch (share keyboard/mouse)
 
       # ── X11 Utilities ────────────────────────────────
-      xorg.xrandr
-      xorg.xkill
-      xdotool
-      xclip
+      xorg.xrandr           # display configuration
+      xorg.xkill            # kill any X window by clicking it
+      xdotool               # X11 keyboard/mouse automation
+      xclip                 # clipboard access from the terminal
     ]
     # ── Conditional Feature Sets ────────────────────────
     ++ lib.optionals config.features.browsers.enable [
-      brave firefox google-chrome microsoft-edge
+      brave               # privacy-focused Chromium browser
+      firefox             # Mozilla Firefox
+      google-chrome       # Google Chrome
+      microsoft-edge      # Microsoft Edge
     ]
     ++ lib.optionals config.features.office.enable [
-      flameshot libreoffice-fresh onlyoffice-desktopeditors inkscape
+      flameshot           # screenshot tool with annotation
+      libreoffice-fresh   # office suite
+      onlyoffice-desktopeditors  # MS Office-compatible suite
+      inkscape            # vector graphics editor
     ]
     ++ lib.optionals config.features.photo.enable [
-      vlc gimp pinta krita glib photocollage mpv
+      vlc                 # versatile media player
+      gimp                # image editor
+      pinta               # simple paint / image editor
+      krita               # digital painting and illustration
+      glib                # GLib utilities
+      photocollage        # photo collage maker
+      mpv                 # minimal scriptable media player
     ]
     ++ lib.optionals config.features.webcam.enable [
-      zoom-us webex cameractrls cameractrls-gtk4 obs-studio
-      linuxPackages.v4l2loopback v4l-utils
+      zoom-us             # Zoom video conferencing
+      webex               # Cisco Webex conferencing
+      cameractrls         # webcam controls (CLI)
+      cameractrls-gtk4    # webcam controls (GTK4 GUI)
+      obs-studio          # screen recording and live streaming
+      linuxPackages.v4l2loopback  # virtual webcam kernel module
+      v4l-utils           # Video4Linux utilities
     ]
     ++ lib.optionals config.features.citrix.enable [
-      pkgs-2505.citrix_workspace
+      pkgs-2505.citrix_workspace  # Citrix virtual desktop client
     ]
     ++ lib.optionals config.features.qemu.enable [
-      virt-viewer virtio-win virt-top virt-manager
+      virt-viewer         # VM display viewer (SPICE/VNC)
+      virtio-win          # Windows VirtIO drivers ISO
+      virt-top            # VM resource monitor (like top for VMs)
+      virt-manager        # VM management GUI
     ];
 }
