@@ -10,9 +10,9 @@
   features.citrix.enable = false;
 
   # ── Kernel ───────────────────────────────────────────────
-  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_18;
+  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_19;
   boot.kernelModules = [ "kvm-amd" "cpufreq_performance" "v4l2loopback" ];
-  boot.extraModulePackages = [ pkgs.linuxKernel.packages.linux_6_18.v4l2loopback ];
+  boot.extraModulePackages = [ pkgs.linuxKernel.packages.linux_6_19.v4l2loopback ];
 
   # ── Boot ─────────────────────────────────────────────────
   boot.loader.systemd-boot.enable = true;
