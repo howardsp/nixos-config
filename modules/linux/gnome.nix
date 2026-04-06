@@ -5,11 +5,12 @@
   services.xserver = {
     enable = true;
     xkb.layout = "us";
-    xkb.variant = "";
+    xkb.variant = "";    
   };
 
   services.displayManager.gdm.enable = true;
-  services.displayManager.gdm.wayland = false;    # X11 for Citrix/Synergy compat
+  
+  #services.displayManager.gdm.wayland = false;    # X11 for Citrix/Synergy compat
   services.desktopManager.gnome.enable = true;
   services.udev.packages = [ pkgs.gnome-settings-daemon ];
   services.dbus.packages = [ pkgs.gnome2.GConf ];
