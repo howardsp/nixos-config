@@ -18,8 +18,8 @@
     };
 
     brews = [
-      "openjdk"
-      "synergy-core"
+      "openjdk"      
+      "deskflow"
     ];
 
     casks = [

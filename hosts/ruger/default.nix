@@ -33,6 +33,8 @@
   networking.firewall.trustedInterfaces = [ "virbr0" ];
 
   # ── Firewall ─────────────────────────────────────────────
-  networking.firewall.enable = false;
-  networking.firewall.allowedTCPPorts = [ 8123 ];
+  networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [ 8123 24800 ];
+  networking.firewall.allowedUDPPorts = [ 24800 ];
+
 }

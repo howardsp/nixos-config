@@ -17,6 +17,7 @@
   programs.dconf.enable = true;
 
   services.gnome.gnome-keyring.enable = true;
+  services.ydotool.enable = true;           # Wayland input automation (udev /dev/uinput access)
 
   # ── Remove bloat from default GNOME install ──────────────
   environment.gnome.excludePackages = with pkgs; [
@@ -59,7 +60,6 @@
     gnomeExtensions.desktop-icons-ng-ding
     gnomeExtensions.quick-settings-tweaker
     gnomeExtensions.pano
-    gnomeExtensions.x11-gestures
     gnomeExtensions.caffeine
     gnomeExtensions.tiling-shell
 

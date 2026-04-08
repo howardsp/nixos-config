@@ -24,7 +24,7 @@ config.environment.systemPackages = with pkgs;
     [
       # ── System Utilities ──────────────────────────────
       xfce.thunar           # lightweight file manager
-      rofi                  # application launcher (dmenu replacement)
+      rofi-wayland          # application launcher (Wayland-native)
       gnome-multi-writer    # write ISO to multiple USB drives at once
       mediawriter           # bootable USB creator (Fedora media writer)
       syncthing             # peer-to-peer file sync
@@ -42,13 +42,11 @@ config.environment.systemPackages = with pkgs;
       dive                  # explore Docker image layers
 
       # ── Synergy (KVM) ───────────────────────────────────
-      synergy               # software KVM switch (share keyboard/mouse)
+      deskflow               # software KVM switch (share keyboard/mouse)
 
-      # ── X11 Utilities ────────────────────────────────
-      xorg.xrandr           # display configuration
-      xorg.xkill            # kill any X window by clicking it
-      xdotool               # X11 keyboard/mouse automation
-      xclip                 # clipboard access from the terminal
+      # ── Wayland Utilities ────────────────────────────
+      wl-clipboard          # clipboard access from the terminal (wl-copy/wl-paste)
+      ydotool               # Wayland keyboard/mouse automation (needs services.ydotool.enable)
     ]
     # ── Conditional Feature Sets ────────────────────────
     ++ lib.optionals config.features.browsers.enable [
