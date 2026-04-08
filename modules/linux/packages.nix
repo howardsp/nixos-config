@@ -24,7 +24,7 @@ config.environment.systemPackages = with pkgs;
     [
       # ── System Utilities ──────────────────────────────
       xfce.thunar           # lightweight file manager
-      rofi-wayland          # application launcher (Wayland-native)
+      rofi                  # application launcher 
       gnome-multi-writer    # write ISO to multiple USB drives at once
       mediawriter           # bootable USB creator (Fedora media writer)
       syncthing             # peer-to-peer file sync
