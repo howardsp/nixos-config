@@ -41,8 +41,9 @@ config.environment.systemPackages = with pkgs;
       docker-compose        # multi-container Docker orchestration
       dive                  # explore Docker image layers
 
-      # ── Synergy (KVM) ───────────────────────────────────
+      # ───────────────────────────────────
       deskflow               # software KVM switch (share keyboard/mouse)
+      wirelesstools       # wireless network utilities
 
       # ── Wayland Utilities ────────────────────────────
       wl-clipboard          # clipboard access from the terminal (wl-copy/wl-paste)

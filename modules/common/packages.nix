@@ -56,7 +56,6 @@
     curlie              # curl with httpie UX
     dig                 # DNS lookup
     nmap                # network scanner
-    wirelesstools       # wireless network utilities
     tcpdump             # packet capture
     tshark              # CLI Wireshark packet analyser
     iproute2            # network config (ip command)
