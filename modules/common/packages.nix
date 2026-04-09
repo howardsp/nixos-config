@@ -58,8 +58,6 @@
     nmap                # network scanner
     tcpdump             # packet capture
     tshark              # CLI Wireshark packet analyser
-    iproute2            # network config (ip command)
-    netcat-gnu          # read/write TCP/UDP connections
     mtr                 # combined ping + traceroute
     iperf3              # network bandwidth tester
     dnsutils            # DNS utilities (nslookup, etc.)

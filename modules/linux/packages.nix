@@ -44,6 +44,9 @@ config.environment.systemPackages = with pkgs;
       # ───────────────────────────────────
       deskflow               # software KVM switch (share keyboard/mouse)
       wirelesstools       # wireless network utilities
+      iproute2            # network config (ip command)
+      netcat-gnu          # read/write TCP/UDP connections
+
 
       # ── Wayland Utilities ────────────────────────────
       wl-clipboard          # clipboard access from the terminal (wl-copy/wl-paste)
