@@ -11,4 +11,11 @@
   ];
 
   home.homeDirectory = "/home/${username}";
+
+  # ── Direnv ───────────────────────────────────────────────
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;        # cached nix shells
+  };
+
 }
