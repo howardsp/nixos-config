@@ -61,9 +61,6 @@
     mtr                 # combined ping + traceroute
     iperf3              # network bandwidth tester
     dnsutils            # DNS utilities (nslookup, etc.)
-    iputils             # ping and other IP utilities
-    iptables            # Linux firewall rules
-    traceroute          # trace network path to host
 
     # ── Data Processing ─────────────────────────────────
     miller              # sed/awk/cut for CSV/JSON/etc

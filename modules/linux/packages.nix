@@ -46,6 +46,10 @@ config.environment.systemPackages = with pkgs;
       wirelesstools       # wireless network utilities
       iproute2            # network config (ip command)
       netcat-gnu          # read/write TCP/UDP connections
+      iputils             # ping and other IP utilities
+      iptables            # Linux firewall rules
+      traceroute          # trace network path to host
+
 
 
       # ── Wayland Utilities ────────────────────────────
