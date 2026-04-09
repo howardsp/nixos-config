@@ -45,7 +45,6 @@
     # ── Dev Tools ───────────────────────────────────────
     python3             # Python 3 runtime
     perl                # Perl runtime
-    direnv              # per-directory environment variables
     nodejs              # JavaScript / TypeScript runtime
     go                  # Go toolchain
     shellcheck          # shell script linter

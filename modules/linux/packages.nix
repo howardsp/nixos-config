@@ -36,6 +36,7 @@ config.environment.systemPackages = with pkgs;
       gcc                   # C/C++ compiler
       cmake                 # build system generator
       jdk                   # Java Development Kit
+      direnv              # per-directory environment variables
 
       # ── Containers ──────────────────────────────────────
       docker-compose        # multi-container Docker orchestration
