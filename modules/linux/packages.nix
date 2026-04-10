@@ -5,7 +5,7 @@
 # │  For cross-platform → modules/common/packages.nix      │
 # │  For macOS-only     → modules/darwin/packages.nix       │
 # └─────────────────────────────────────────────────────────┘
-{ config, lib, pkgs, nixpkgs-unstable, pkgs-2505,... }:
+{ config, lib, pkgs, pkgs-unstable, pkgs-2505,... }:
 {
   # ── Feature Toggles ──────────────────────────────────────
   # Override these per-host: e.g. `features.office.enable = false;`
@@ -43,7 +43,7 @@ config.environment.systemPackages = with pkgs;
       dive                  # explore Docker image layers
 
       # ───────────────────────────────────
-      deskflow               # software KVM switch (share keyboard/mouse)
+      pkgs-unstable.deskflow            # software KVM switch (share keyboard/mouse)
       wirelesstools       # wireless network utilities
       iproute2            # network config (ip command)
       netcat-gnu          # read/write TCP/UDP connections

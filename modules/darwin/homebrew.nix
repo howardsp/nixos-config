@@ -10,6 +10,7 @@
 {
   homebrew = {
     enable = true;
+    taps = ["deskflow/tap"];
 
     onActivation = {
       autoUpdate = true;
@@ -18,8 +19,7 @@
     };
 
     brews = [
-      "openjdk"      
-      "deskflow"
+      "openjdk"            
     ];
 
     casks = [
@@ -27,6 +27,7 @@
       "telegram"
       "zoom"
       "webex"
+      "deskflow"
 
       # Browsers
       "google-chrome"
