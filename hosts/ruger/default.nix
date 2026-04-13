@@ -8,6 +8,7 @@
   # ── Feature Toggles ──────────────────────────────────────
   features.qemu.enable = true;
   features.citrix.enable = false;
+  features.ollama.enable = true;
 
   # ── Kernel ───────────────────────────────────────────────
   boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_19;

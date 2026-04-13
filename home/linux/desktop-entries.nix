@@ -33,14 +33,4 @@
     Icon=folder-remote.png
   '';
 
-  # ── Synergy Client Autostart ─────────────────────────────
-  home.file.".config/autostart/synergy.desktop".text = ''
-    [Desktop Entry]
-    Type=Application
-    Name=synergy
-    Exec=synergy
-    Categories=Other
-    X-GNOME-Autostart-enabled=true
-    Terminal=false
-  '';
 }

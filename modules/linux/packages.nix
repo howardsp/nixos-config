@@ -15,8 +15,7 @@
     photo.enable    = lib.mkEnableOption "Photo/video tools"         // { default = true; };
     webcam.enable   = lib.mkEnableOption "Webcam & video conferencing" // { default = true; };
     citrix.enable   = lib.mkEnableOption "Citrix Workspace"         // { default = true; };
-    qemu.enable     = lib.mkEnableOption "QEMU/KVM virtualisation"  // { default = false; };
-    "synergy-server".enable = lib.mkEnableOption "Synergy server"   // { default = false; };
+    qemu.enable     = lib.mkEnableOption "QEMU/KVM virtualisation"  // { default = false; };        
   };
 
 
@@ -89,7 +88,7 @@ config.environment.systemPackages = with pkgs;
       v4l-utils           # Video4Linux utilities
     ]
     ++ lib.optionals config.features.citrix.enable [
-      pkgs-2505.citrix_workspace  # Citrix virtual desktop client
+      pkgs-2505.citrix_workspace  # Citrix virtual desktop client      
     ]
     ++ lib.optionals config.features.qemu.enable [
       virt-viewer         # VM display viewer (SPICE/VNC)

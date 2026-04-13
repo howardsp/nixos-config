@@ -4,6 +4,7 @@
   imports = [
     ./packages.nix
     ./gnome.nix
+    ./ollama.nix
     ./sound.nix
     ./printing.nix
     ./performance.nix

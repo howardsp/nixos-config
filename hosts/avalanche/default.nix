@@ -5,8 +5,6 @@
     ./hardware.nix
   ];
 
-  # ── Feature Toggles ──────────────────────────────────────
-  features."synergy-server".enable = true;
   
 
   # ── Kernel ───────────────────────────────────────────────
@@ -32,9 +30,7 @@
   virtualisation.spiceUSBRedirection.enable = true;
   networking.firewall.trustedInterfaces = [ "virbr0" ];
 
-  # ── Synergy Server ───────────────────────────────────────
-  services.synergy.server.enable = true;
-
+  
   # ── Firewall ─────────────────────────────────────────────
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 8123 24800 ];

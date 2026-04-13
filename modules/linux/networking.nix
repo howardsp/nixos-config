@@ -10,15 +10,7 @@
     allowPing = true;
   };
 
-  # ── Synergy Server (toggled per-host) ────────────────────
-  networking.firewall.allowedTCPPortRanges =
-    lib.mkIf config.features."synergy-server".enable [
-      { from = 24800; to = 24801; }
-    ];
-  networking.firewall.allowedUDPPortRanges =
-    lib.mkIf config.features."synergy-server".enable [
-      { from = 24800; to = 24801; }
-    ];
-
-  services.synergy.server.enable = lib.mkDefault false;
+  networking.firewall.allowedTCPPortRanges = [{ from = 24800; to = 24801; }];
+  networking.firewall.allowedUDPPortRanges = [{ from = 24800; to = 24801; }];
+  
 }

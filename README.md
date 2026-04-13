@@ -108,7 +108,6 @@ Per-host feature flags in `hosts/<name>/default.nix`:
 ```nix
 features.qemu.enable = true;            # QEMU/KVM virtualisation
 features.steam.enable = false;           # Steam gaming
-features.synergy-server.enable = true;   # Synergy KVM server
 features.homeassistant.enable = true;    # Home Assistant container
 features.webcam.enable = false;          # Webcam + Zoom/Webex
 features.citrix.enable = false;          # Citrix Workspace
