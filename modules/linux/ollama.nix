@@ -7,7 +7,7 @@
   config = lib.mkIf config.features.ollama.enable {
 
     services.ollama = {
-      package = pkgs-llm-agents.ollama;
+      package = pkgs-unstable.ollama;
       enable = true;
       environmentVariables = {
         OLLAMA_REASONING_PARSER = "deepseek_r1"; 
