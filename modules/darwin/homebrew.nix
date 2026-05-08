@@ -29,6 +29,7 @@
       "zoom"
       "webex"
       
+      "obsidian"
 
       # Browsers
       "google-chrome"

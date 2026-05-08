@@ -158,6 +158,15 @@
       sort-directories-first = true;
     };
 
+    "org/gnome/shell/extensions/pop-shell" = {
+        # Enable the active hint (the border)
+        show-active-hint = true;
+        
+        # Border thickness in pixels
+        hint-color-rgba = "rgba(85, 62, 53, 1)";         
+      };
+
+
     # ══════════════════════════════════════════════════════
     #  KEYBINDINGS
     # ══════════════════════════════════════════════════════

@@ -36,6 +36,8 @@ config.environment.systemPackages = with pkgs;
       cmake                 # build system generator
       jdk                   # Java Development Kit
       direnv              # per-directory environment variables
+      postgresql
+      obsidian
 
       # ── Containers ──────────────────────────────────────
       docker-compose        # multi-container Docker orchestration
@@ -89,6 +91,8 @@ config.environment.systemPackages = with pkgs;
     ]
     ++ lib.optionals config.features.citrix.enable [
       pkgs-2505.citrix_workspace  # Citrix virtual desktop client      
+      pkgs-2505.pcsclite
+      pkgs-2505.ibus
     ]
     ++ lib.optionals config.features.qemu.enable [
       virt-viewer         # VM display viewer (SPICE/VNC)

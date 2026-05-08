@@ -1,5 +1,5 @@
 # modules/linux/gnome.nix — GNOME desktop + extensions + themes
-{ config, pkgs, ... }:
+{ config, pkgs, pkgs-unstable, ... }:
 {
   # ── X11 & Display Manager ────────────────────────────────
   services.xserver = {
@@ -53,7 +53,7 @@
     gnomeExtensions.gtile
     gnomeExtensions.highlight-focus
     gnomeExtensions.just-perfection
-    gnomeExtensions.appindicator
+    pkgs-unstable.gnomeExtensions.appindicator
     gnomeExtensions.vitals
     gnomeExtensions.transparent-window-moving
     gnomeExtensions.pop-shell

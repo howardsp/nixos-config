@@ -12,6 +12,9 @@
   boot.kernelModules = [ "kvm-amd" "cpufreq_performance" "v4l2loopback" ];
   boot.extraModulePackages = [ pkgs.linuxKernel.packages.linux_6_18.v4l2loopback ];
 
+
+  features.ollama.enable = true;
+
   # ── Boot ─────────────────────────────────────────────────
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -33,6 +36,6 @@
   
   # ── Firewall ─────────────────────────────────────────────
   networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 8123 24800 ];
-  networking.firewall.allowedUDPPorts = [ 24800 ];
+  networking.firewall.allowedTCPPorts = [ 8123 24800 54329];
+  networking.firewall.allowedUDPPorts = [ 24800 54329];
 }

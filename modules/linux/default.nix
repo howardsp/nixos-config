@@ -23,6 +23,20 @@
   # ── Host Identity ────────────────────────────────────────
   networking.hostName = host;
 
+  services.postgresql = {
+    enable = true;
+    ensureDatabases = [ "paperclip" ];
+    ensureUsers = [
+      {
+        name = username;
+        ensureClauses = {
+          login = true;
+          superuser = true;
+        };
+      }
+    ];
+  };
+
   # ── Flatpak ──────────────────────────────────────────────
   services.flatpak.enable = true;
 
