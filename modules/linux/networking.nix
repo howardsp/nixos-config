@@ -3,6 +3,14 @@
 {
   networking.networkmanager.enable = true;
 
+  # ── WiFi ─────────────────────────────────────────────────
+  networking.networkmanager.wifi.powersave = false;
+  networking.networkmanager.settings."connection-wifi-defaults" = {
+    "match-device" = "type:wifi";
+    "connection.type" = "802-11-wireless";
+    "802-11-wireless.band" = "a";
+  };
+
   # ── Firewall ─────────────────────────────────────────────
   # Default: enabled. Per-host configs can `networking.firewall.enable = false;`
   networking.firewall = {

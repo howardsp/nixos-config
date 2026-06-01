@@ -19,7 +19,7 @@
         "pop-shell@system76.com"
         "dash-to-panel@jderose9.github.com"
         "date-menu-formatter@marcinjakubowski.github.com"
-        "gTile@vibou"
+        #"gTile@vibou"
         "highlight-focus@pimsnel.com"
         "just-perfection-desktop@just-perfection"
         "Vitals@CoreCoding.com"
@@ -152,6 +152,7 @@
 
     "org/gnome/mutter" = {
       edge-tiling = true;
+      workspaces-only-on-primary = false;
     };
 
     "org/gtk/settings/file-chooser" = {

@@ -45,7 +45,7 @@
     # ── Dev Tools ───────────────────────────────────────
     python3             # Python 3 runtime
     perl                # Perl runtime
-    pkgs-unstable.nodejs_25           # JavaScript / TypeScript runtime
+    pkgs-unstable.nodejs           # JavaScript / TypeScript runtime
     go                  # Go toolchain
     shellcheck          # shell script linter
     shfmt               # shell script formatter
