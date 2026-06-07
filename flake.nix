@@ -13,7 +13,7 @@
 
   inputs = {
     # ── Core ──────────────────────────────────────────────
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs2505.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     claude-desktop.url = "github:aaddrick/claude-desktop-debian/5c8191e82f8b7ed7814272c5d9b9e57e3c726f58";
@@ -21,13 +21,13 @@
 
     # ── Home Manager ──────────────────────────────────────
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # ── macOS ─────────────────────────────────────────────
     darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+      url = "github:LnL7/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
