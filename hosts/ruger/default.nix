@@ -1,4 +1,9 @@
-# hosts/igloo/default.nix — Howard's primary workstation
+# hosts/ruger/default.nix — Howard's primary workstation (AMD)
+#
+# Runs the bleeding-edge 7.0 kernel (see boot.kernelPackages below).
+# NOTE: v4l2loopback is listed in boot.kernelModules but its matching
+# extraModulePackages entry is commented out, so the virtual-webcam
+# module is NOT built for this kernel (see boot.extraModulePackages).
 { config, lib, pkgs, ... }:
 {
   imports = [

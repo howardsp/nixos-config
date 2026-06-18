@@ -35,7 +35,10 @@
 
   
   # ── Firewall ─────────────────────────────────────────────
+  # 8123  = Home Assistant UI (container, when features.homeassistant is on)
+  # 24800 = Deskflow/Synergy software KVM
+  # 54329 = TODO: document what listens here (opened TCP+UDP)
   networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 8123 24800 54329];
-  networking.firewall.allowedUDPPorts = [ 24800 54329];
+  networking.firewall.allowedTCPPorts = [ 8123 24800 54329 ];
+  networking.firewall.allowedUDPPorts = [ 24800 54329 ];
 }

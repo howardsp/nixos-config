@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Nix Configuration Review — 2026-06-09</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color:#1c2733; max-width: 960px; margin: 2em auto; padding: 0 1em; line-height: 1.5; }
+  h1 { border-bottom: 3px solid #5277c3; padding-bottom: .3em; }
+  h2 { color:#5277c3; margin-top: 2em; border-bottom: 1px solid #d8dee9; padding-bottom:.2em;}
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.95em; }
+  th, td { border: 1px solid #c9d2dc; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #eef2f7; }
+  code { background:#f0f3f7; padding: 1px 4px; border-radius: 3px; font-size: .92em; }
+  .crit { background:#fde8e8; font-weight:bold; }
+  .high { background:#fdf0e0; font-weight:bold; }
+  .med  { background:#fdf8df; }
+  .low  { background:#e9f5ec; }
+  .info { background:#e8eef8; }
+  .good { color:#1b7a3d; }
+  .tag  { font-size:.8em; padding:1px 6px; border-radius:8px; background:#dde5ef; }
+</style>
+</head>
+<body>
+
+<h1>Nix Configuration Review</h1>
+<p><b>Repository:</b> <code>~/nixos-config</code> &nbsp;|&nbsp; <b>Date:</b> 2026-06-09 &nbsp;|&nbsp;
+<b>Hosts:</b> ruger, avalanche, virtualnix (NixOS 26.05) · nixbookair (nix-darwin 26.05)</p>
+
+<h2>Executive Summary</h2>
+<p>This is a well-organized flake: a clean two-function builder layer (<code>lib/default.nix</code>),
+clear common/linux/darwin module split, per-host feature toggles, pinned Homebrew taps, and proper
+<code>follows</code> on home-manager and nix-darwin. Both the <code>ruger</code> and
+<code>nixbookair</code> configurations <b>evaluate successfully</b> as of this review.</p>
+<p>The most important items found: a <b>broken-on-macOS shell startup</b> (direnv hook with no direnv
+installed), a <b>dead v4l2loopback module on ruger</b>, several <b>root-equivalent privileges granted by
+default</b> (docker/lxd groups, <code>trusted-users @wheel</code>, PostgreSQL superuser on every host),
+and <code>mitigations=off</code> on internet-browsing workstations. Documentation fixes (stale
+<i>igloo</i> host name, wrong file headers, undocumented ports/exceptions) have already been
+<b>applied to the repo</b> as part of this review.</p>
+
+<h2>1 · Flake &amp; Architecture Review (NixOS expert pass)</h2>
+<table>
+<tr><th>#</th><th>Severity</th><th>Finding</th><th>Recommendation</th></tr>
+<tr class="high"><td>F1</td><td>High</td>
+<td><code>hosts/ruger/default.nix</code>: <code>v4l2loopback</code> is in <code>boot.kernelModules</code> but the matching <code>boot.extraModulePackages</code> line is commented out — the virtual webcam module is never built for kernel 7.0, so the module load silently fails.</td>
+<td>Re-enable <code>boot.extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];</code> (use <code>config.boot.kernelPackages</code>, not a hard-coded kernel version, so it tracks kernel bumps — avalanche hard-codes <code>linux_6_18</code> and will break on its next kernel change).</td></tr>
+<tr class="high"><td>F2</td><td>High</td>
+<td><code>lib/default.nix</code> sets <code>nixpkgs.config.allowBroken = true</code> globally for all Linux hosts, silencing breakage for every package.</td>
+<td>Remove it; if one package is broken, allow it specifically (<code>allowBrokenPredicate</code> or an overlay) and document which one.</td></tr>
+<tr class="high"><td>F3</td><td>High</td>
+<td><code>system.stateVersion = "25.11"</code> (modules/linux/default.nix) and <code>home.stateVersion = "25.05"</code> (home/common) are defined in <b>shared</b> modules. stateVersion is a per-machine, set-once value; a future host added to this flake would silently inherit an old stateVersion.</td>
+<td>Move <code>system.stateVersion</code> into each <code>hosts/&lt;name&gt;/default.nix</code> and <code>home.stateVersion</code> per-user/host (or document loudly that new hosts must override it).</td></tr>
+<tr class="med"><td>F4</td><td>Medium</td>
+<td>Duplicate Nix daemon settings: <code>nix.gc</code> and <code>warn-dirty</code> are set in both <code>modules/common/default.nix</code> and <code>modules/common/nix-settings.nix</code>.</td>
+<td>Consolidate everything into <code>nix-settings.nix</code>; also add <code>nix.gc.dates</code> (Linux) / <code>interval</code> (Darwin) explicitly so GC cadence is documented.</td></tr>
+<tr class="med"><td>F5</td><td>Medium</td>
+<td>No <code>formatter</code>, <code>checks</code>, or <code>devShells</code> flake outputs, despite shipping alejandra/statix/deadnix as packages. statix reports ~25 style warnings (repeated keys, empty lambda patterns); deadnix reports many unused lambda args.</td>
+<td>Add <code>formatter.&lt;system&gt; = pkgs.alejandra;</code> and a <code>checks</code> output (or treefmt-nix + pre-commit) running alejandra/statix/deadnix, then <code>nix flake check</code> in CI (GitHub Actions).</td></tr>
+<tr class="med"><td>F6</td><td>Medium</td>
+<td><code>llm-agents</code> and <code>claude-desktop</code> inputs don't <code>follows</code> your nixpkgs — the lock file carries three extra nixpkgs revisions (<code>nixpkgs_2</code>, <code>nixpkgs_3</code>), inflating eval time and downloads.</td>
+<td>Add <code>inputs.nixpkgs.follows = "nixpkgs-unstable"</code> (or stable) to those inputs where they support it.</td></tr>
+<tr class="med"><td>F7</td><td>Medium</td>
+<td>Home Manager has no <code>backupFileExtension</code>; a switch fails hard whenever a target dotfile already exists.</td>
+<td>Set <code>home-manager.backupFileExtension = "hm-bak";</code> in <code>mkHomeManager</code>.</td></tr>
+<tr class="med"><td>F8</td><td>Medium</td>
+<td><code>features.qemu.enable</code> only gates client <i>packages</i>; <code>virtualisation.libvirtd</code>/<code>virt-manager</code>/SPICE are re-enabled manually in each host, duplicating 4 lines per host and letting toggle and service drift apart (avalanche has libvirtd on with the feature off).</td>
+<td>In <code>virtualisation.nix</code>: <code>virtualisation.libvirtd.enable = config.features.qemu.enable;</code> etc. (keep <code>lib.mkDefault</code> for overrides).</td></tr>
+<tr class="med"><td>F9</td><td>Medium</td>
+<td>Activation script does <code>ln -sf /bin/sh /bin/bash</code> — an impure global mutation; scripts using bash-isms get <code>sh</code>-mode bash and can break subtly.</td>
+<td>Link the real bash: <code>ln -sf ${pkgs.bash}/bin/bash /bin/bash</code>, or better use <code>services.envfs.enable = true;</code> which solves all hard-coded shebangs declaratively.</td></tr>
+<tr class="med"><td>F10</td><td>Medium</td>
+<td>Root-run activation scripts edit files in the user's home (Citrix ini, Zoom conf) — wrong layer, can change file ownership, and runs on every system activation.</td>
+<td>Move to Home Manager <code>home.activation</code> (runs as the user) or generate the config files declaratively with <code>home.file</code>.</td></tr>
+<tr class="low"><td>F11</td><td>Low</td>
+<td>ydotool-based GNOME keybindings (remote paste, close-tab, Citrix keys) require the <code>ydotoold</code> daemon, but <code>services.ydotool.enable</code> is commented out in gnome.nix — those bindings are currently dead.</td>
+<td>Enable <code>services.ydotool.enable = true;</code> and add the user to the module's group, or remove the bindings.</td></tr>
+<tr class="low"><td>F12</td><td>Low</td>
+<td><code>xscreensaver</code> service (home/linux) does nothing under GNOME Wayland, which uses its own locker.</td>
+<td>Remove it, or keep only for X11 sessions.</td></tr>
+<tr class="low"><td>F13</td><td>Low</td>
+<td>EDITOR is set three ways: system <code>EDITOR=vim</code>, HM <code>EDITOR=nvim</code>, and <code>programs.neovim.defaultEditor=true</code>. Eval also prints a <code>programs.neovim.withPython3</code> deprecation warning.</td>
+<td>Pick one (suggest <code>defaultEditor = true</code> only), delete the rest, and set <code>withPython3</code> explicitly to silence the warning.</td></tr>
+<tr class="low"><td>F14</td><td>Low</td>
+<td>zsh history-substring-search is fetched from GitHub by hand; p10k is sourced manually. nixpkgs packages both. Also <code>extensionsFromVscodeMarketplace []</code> is dead code.</td>
+<td>Use <code>pkgs.zsh-history-substring-search</code> / <code>programs.zsh.plugins</code> with nixpkgs sources; drop the empty marketplace list.</td></tr>
+<tr class="low"><td>F15</td><td>Low</td>
+<td><code>home/linux/gnome-settings.nix</code> hard-codes <code>/home/howardsp/...</code> in brightness/paste keybindings while everything else is parameterized by <code>username</code>.</td>
+<td>Use <code>${config.home.homeDirectory}</code>.</td></tr>
+<tr class="low"><td>F16</td><td>Low</td>
+<td>72 Nerd Fonts + ~20 font families install on every host, including the headless-ish VM — slows rebuilds/closure.</td>
+<td>Split a “fonts-full” vs “fonts-minimal” set, or gate behind a feature toggle.</td></tr>
+</table>
+
+<h2>2 · Linux ⇄ macOS Cohesion</h2>
+<table>
+<tr><th>#</th><th>Severity</th><th>Finding</th><th>Recommendation</th></tr>
+<tr class="crit"><td>M1</td><td>Critical</td>
+<td><b>macOS shell startup is broken by design:</b> <code>home/common/shell/default.nix</code> runs <code>eval "$(direnv hook zsh)"</code> (and bash equivalent) on <i>both</i> platforms, but direnv is only installed via <code>modules/linux/packages.nix</code> and <code>programs.direnv</code> is only enabled in <code>home/linux</code>. On nixbookair every new terminal errors (<code>direnv: command not found</code>) unless Homebrew happens to provide it.</td>
+<td>Move <code>programs.direnv = { enable = true; nix-direnv.enable = true; };</code> to <code>home/common</code> and delete the manual <code>eval</code> hooks entirely — the HM module wires shell integration itself on both OSes. Same for the manual <code>fzf --zsh</code> eval: <code>programs.fzf</code> already integrates it.</td></tr>
+<tr class="high"><td>M2</td><td>High</td>
+<td><code>homebrew.onActivation.autoUpdate = true; upgrade = true;</code> contradicts the pinned, immutable taps (<code>mutableTaps = false</code>, taps as flake inputs). Every rebuild pulls whatever is newest from the cask CDN — your Mac drifts while Linux stays pinned.</td>
+<td>Set <code>autoUpdate = false</code> and run upgrades deliberately via <code>nix flake update</code> + rebuild, restoring "the lock file describes the machine" on both platforms.</td></tr>
+<tr class="med"><td>M3</td><td>Medium</td>
+<td>The feature-toggle system (<code>features.*</code>) exists only on Linux. The Mac has no equivalent switchboard, so host-level customization diverges structurally.</td>
+<td>Define the <code>features</code> options in <code>modules/common</code>, and let darwin modules (homebrew casks lists) honor the same toggles (e.g. <code>features.browsers</code> selecting casks).</td></tr>
+<tr class="med"><td>M4</td><td>Medium</td>
+<td><code>nix.settings.sandbox</code> and store optimisation are commented out globally “because Darwin doesn’t like it”, losing them on Linux too.</td>
+<td>Guard per-platform: in modules/linux set <code>nix.settings.sandbox = true;</code> and <code>nix.optimise.automatic = true;</code>; leave Darwin defaults alone.</td></tr>
+<tr class="med"><td>M5</td><td>Medium</td>
+<td>Rebuild ergonomics differ per OS (<code>nixlinux</code> vs <code>nixdarwin</code>/<code>nixdarwin-activate</code> aliases).</td>
+<td>Add one <code>rebuild</code> script in <code>shell-scripts.nix</code> that branches on <code>uname</code> — same muscle memory everywhere (you already ship <code>nh</code>, which also abstracts this: <code>nh os switch</code> / <code>nh darwin switch</code>).</td></tr>
+<tr class="low"><td>M6</td><td>Low</td>
+<td>VS Code is configured declaratively on Linux (HM module) but imperatively on macOS (cask) — settings/extensions drift.</td>
+<td>Move <code>vscode.nix</code> to <code>home/common</code> (the HM module works on Darwin) or accept divergence consciously and note it in README.</td></tr>
+<tr class="low"><td>M7</td><td>Low</td>
+<td>Linux user account declares <code>shell = pkgs.zsh</code> and groups; the darwin user block sets only <code>home</code>. Fine today, but parity items (shell, description) are implicit on macOS.</td>
+<td>Optionally set <code>users.users.&lt;name&gt;.shell = pkgs.zsh;</code> on Darwin too for symmetry.</td></tr>
+</table>
+
+<h2>3 · Security Review (Linux security expert pass)</h2>
+<table>
+<tr><th>#</th><th>Severity</th><th>Finding</th><th>Recommendation</th></tr>
+<tr class="high"><td>S1</td><td>High</td>
+<td><code>mitigations=off</code> on ruger and avalanche disables all Spectre/Meltdown-class CPU mitigations on machines that run four browsers, Zoom, and remote-work tooling — i.e. plenty of untrusted code.</td>
+<td>Remove it. On Zen 3+/recent kernels the measured gain is typically 1–3% for desktop loads; the README now carries a warning either way.</td></tr>
+<tr class="high"><td>S2</td><td>High</td>
+<td>The user is in <code>docker</code> and <code>lxd</code> groups — both are documented root-equivalents (trivial host-root via bind mounts). LXD isn’t even configured anywhere in this repo; <code>media</code>/<code>plugdev</code> are also unused on NixOS.</td>
+<td>Drop <code>lxd</code>, <code>media</code>, <code>plugdev</code>. For Docker, prefer rootless mode (<code>virtualisation.docker.rootless.enable = true; setSocketVariable = true;</code>) or switch to podman (already the OCI backend for Home Assistant).</td></tr>
+<tr class="high"><td>S3</td><td>High</td>
+<td><code>nix.settings.trusted-users = [ "root" "@wheel" ]</code>: any wheel user can feed the daemon arbitrary substituters/unsigned paths — effectively root <i>without</i> a sudo prompt, weakening <code>wheelNeedsPassword</code>.</td>
+<td>Restrict to <code>[ "root" ]</code> (plus your user only if you genuinely need to add caches ad-hoc; flake-registered substituters keep working for everyone regardless).</td></tr>
+<tr class="med"><td>S4</td><td>Medium</td>
+<td>PostgreSQL runs on <b>every</b> Linux host with the desktop user as <code>SUPERUSER</code>. Local-only listener, but it's un-gated attack surface and privilege.</td>
+<td>Gate behind <code>features.postgres.enable</code>, grant only <code>CREATEDB</code>/ownership of the <code>paperclip</code> DB instead of superuser.</td></tr>
+<tr class="med"><td>S5</td><td>Medium</td>
+<td>Ollama binds <code>OLLAMA_HOST=0.0.0.0</code>. The Ollama API has <b>no authentication</b>; anyone on the LAN could run/pull models and read responses. (Today port 11434 isn’t opened in the firewall, so the binding's intent is unmet — the config is internally inconsistent.)</td>
+<td>Decide: local-only → drop the env var (defaults to 127.0.0.1); LAN service → keep it, open 11434 only on trusted interfaces, and front it with a reverse proxy w/ auth if anything sensitive flows through it.</td></tr>
+<tr class="med"><td>S6</td><td>Medium</td>
+<td>Deskflow/Synergy ports 24800–24801 are opened on <b>all</b> hosts via the base networking module, plus per-host re-opens. A software-KVM stream (keystrokes!) reachable from the whole LAN.</td>
+<td>Open the ports only on hosts that actually share input, verify Deskflow TLS is enabled, and consider <code>networking.firewall.extraCommands</code> to restrict source IPs to the peer machine.</td></tr>
+<tr class="med"><td>S7</td><td>Medium</td>
+<td>Quick-paste keybindings type the contents of <code>~/.config/.10.txt</code>/<code>.11.txt</code> into whatever window has focus. If these are credentials, they live in plaintext and can be replayed into the wrong window with one mis-chord.</td>
+<td>Use a secret manager (Bitwarden is already on the Mac; <code>rbw</code>/GNOME keyring + a rofi picker on Linux), or at minimum chmod 600 and accept the risk consciously.</td></tr>
+<tr class="med"><td>S8</td><td>Medium</td>
+<td>Home Assistant container runs with <code>--network=host</code> and a serial device passthrough, on a mutable <code>:stable</code> tag — silent supply-chain updates with host networking.</td>
+<td>Pin the image by digest (<code>image = "ghcr.io/home-assistant/home-assistant@sha256:..."</code>) and update it via PRs; host networking is normal for HA discovery but worth documenting.</td></tr>
+<tr class="med"><td>S9</td><td>Medium</td>
+<td><code>permittedInsecurePackages = [ "libsoup-2.74.3" ]</code> — EOL library with published CVEs in HTTP parsing.</td>
+<td>Identify the consumer with <code>nix why-depends</code> (comment added in repo) and re-test removal after every <code>nix flake update</code>.</td></tr>
+<tr class="low"><td>S10</td><td>Low</td>
+<td>OpenSSH posture is good (key-only, no root, no X11) but is enabled on every host including the VM and laptops; no <code>AllowUsers</code>, banner, or fail2ban.</td>
+<td>Add <code>KbdInteractiveAuthentication = false;</code>, <code>AllowUsers = [ "howardsp" ];</code>, and enable sshd per-host instead of fleet-wide. <code>services.fail2ban.enable = true;</code> if any host is ever exposed.</td></tr>
+<tr class="low"><td>S11</td><td>Low</td>
+<td>Kernel hardening is a good start but partial.</td>
+<td>Consider: <code>kernel.kptr_restrict=2</code>, <code>kernel.unprivileged_bpf_disabled=1</code>, <code>net.core.bpf_jit_harden=2</code>, <code>kernel.yama.ptrace_scope=1</code>, <code>security.protectKernelImage=true</code>, <code>security.sudo.execWheelOnly=true</code>, and <code>services.fwupd.enable=true</code> for firmware updates.</td></tr>
+<tr class="low"><td>S12</td><td>Low</td>
+<td>Both <code>earlyoom</code> and systemd's default <code>systemd-oomd</code> can be active — two OOM killers with different policies racing under memory pressure.</td>
+<td>Pick one: keep earlyoom and set <code>systemd.oomd.enable = false;</code>.</td></tr>
+<tr class="low"><td>S13</td><td>Low</td>
+<td>macOS: Touch ID for sudo is enabled (good), but the application firewall isn't managed declaratively.</td>
+<td>Add <code>networking.applicationFirewall = { enable = true; blockAllIncoming = false; enableStealthMode = true; };</code> (nix-darwin) to nixbookair.</td></tr>
+<tr class="info"><td>S14</td><td>Info</td>
+<td>Flatpak is enabled with no declared remotes — apps installed there bypass Nix review/pinning entirely.</td>
+<td>If only Flathub is used, document it; consider <code>nix-flatpak</code> for declarative flatpaks, or drop Flatpak if unused.</td></tr>
+</table>
+
+<h2>4 · Documentation Changes Applied (in this review)</h2>
+<ul>
+<li><b>README.md rewritten:</b> stale <code>igloo</code> host replaced with <code>ruger</code>; added host inventory table, package-set (<code>pkgs-unstable</code>/<code>pkgs-2505</code>/<code>pkgs-llm-agents</code>) reference, corrected feature-toggle list with real defaults (incl. missing <code>ollama</code> and <code>homeassistant</code>), rollback instructions, and a security-posture summary including the <code>mitigations=off</code> warning.</li>
+<li><b>hosts/ruger/default.nix:</b> header fixed (said <i>igloo</i>); documented the disabled v4l2loopback module build.</li>
+<li><b>modules/linux/ollama.nix:</b> header fixed (was a copy-paste of containers.nix); documented the <code>OLLAMA_HOST=0.0.0.0</code> security implication; pruned unused lambda args.</li>
+<li><b>lib/default.nix:</b> documented why <code>allowBroken</code> is risky and how to retire the <code>libsoup-2.74.3</code> insecure-package exception.</li>
+<li><b>hosts/avalanche/default.nix:</b> firewall ports annotated (8123 HA, 24800 Deskflow, 54329 marked TODO — please document what listens there).</li>
+<li><b>modules/linux/default.nix:</b> PostgreSQL block annotated (fleet-wide + superuser caveat).</li>
+<li>Verified post-edit: <code>ruger</code> and <code>nixbookair</code> both still evaluate cleanly.</li>
+</ul>
+
+<h2>5 · Suggested Priority Order</h2>
+<table>
+<tr><th>Priority</th><th>Items</th><th>Effort</th></tr>
+<tr><td>1 — This week</td><td>M1 (direnv on macOS), F1 (v4l2loopback), S2 (drop lxd/unused groups), S3 (trusted-users), F7 (HM backupFileExtension)</td><td>~1 hour</td></tr>
+<tr><td>2 — Next rebuild cycle</td><td>S1 (mitigations), M2 (homebrew autoUpdate), F2 (allowBroken), F3 (stateVersion placement), S5 (Ollama bind), F8 (qemu toggle wiring)</td><td>~2 hours</td></tr>
+<tr><td>3 — When convenient</td><td>F5 (formatter/checks/CI), M3 (shared feature toggles), F9/F10 (activation scripts), S4 (postgres gating), S11 (sysctl extras), remaining Low/Info items</td><td>Half a day</td></tr>
+</table>
+
+<p style="color:#5b6b7c; font-size:.9em; margin-top:2em;">Generated by Claude Code · review of commit 139c840 (+ uncommitted flake.lock/gnome-settings changes) · linters: statix, deadnix · evaluation verified with <code>nix eval</code> for ruger &amp; nixbookair.</p>
+</body>
+</html>

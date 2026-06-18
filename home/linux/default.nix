@@ -8,6 +8,7 @@
     ./gnome-settings.nix
     ./desktop-entries.nix
     ./xscreensaver.nix
+    ./citrix.nix
   ];
 
   home.homeDirectory = "/home/${username}";

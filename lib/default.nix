@@ -43,11 +43,17 @@ in {
     specialArgs = mkSpecialArgs { inherit host username fullname system; };
     modules = [
       # Allow unfree
-      {nixpkgs.config.allowUnfree = true; }
-      {nixpkgs.config.allowBroken = true;}
-      {nixpkgs.config.permittedInsecurePackages = [
-                "libsoup-2.74.3"
-              ];
+      { nixpkgs.config.allowUnfree = true; }
+      # allowBroken is a blunt instrument — it silences breakage for EVERY
+      # package, not just the one that needed it. Re-test removing it after
+      # each `nix flake update`.
+      { nixpkgs.config.allowBroken = true; }
+      # libsoup 2.x is EOL with known CVEs; still required by a GTK app in
+      # this closure (`nix why-depends` to identify). Re-check on each update
+      # and drop the exception as soon as nothing pulls it in.
+      { nixpkgs.config.permittedInsecurePackages = [
+          "libsoup-2.74.3"
+        ];
       }
       
 

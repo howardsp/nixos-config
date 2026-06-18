@@ -153,6 +153,7 @@
     "org/gnome/mutter" = {
       edge-tiling = true;
       workspaces-only-on-primary = false;
+      experimental-features = [ "scale-monitor-framebuffer" "input-capture-v1" ];
     };
 
     "org/gtk/settings/file-chooser" = {

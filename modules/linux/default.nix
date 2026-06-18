@@ -23,6 +23,11 @@
   # ── Host Identity ────────────────────────────────────────
   networking.hostName = host;
 
+  # ── PostgreSQL ───────────────────────────────────────────
+  # NOTE: runs on EVERY Linux host (not feature-gated) and grants the
+  # desktop user SUPERUSER. Listens on localhost only (NixOS default).
+  # Consider gating behind a `features.postgres` toggle if a host
+  # doesn't need it.
   services.postgresql = {
     enable = true;
     ensureDatabases = [ "paperclip" ];
